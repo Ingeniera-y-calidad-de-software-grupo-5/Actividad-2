@@ -1,0 +1,27 @@
+{
+  "name": "amigogasto-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo colaborativo de gestión de gastos entre amigos - SplitWise Collab",
+  "author": "Ingeniería y Calidad de Software - Grupo 5",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "yarn dev:all",
+    "dev:all": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"yarn workspace @amigogasto/backend start:dev\" \"yarn workspace @amigogasto/frontend dev\"",
+    "start:backend": "yarn workspace @amigogasto/backend start:dev",
+    "start:frontend": "yarn workspace @amigogasto/frontend dev",
+    "build": "yarn workspace @amigogasto/backend build && yarn workspace @amigogasto/frontend build",
+    "test": "yarn workspace @amigogasto/backend test && yarn workspace @amigogasto/frontend test",
+    "lint": "yarn workspace @amigogasto/backend lint && yarn workspace @amigogasto/frontend lint",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f db"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
