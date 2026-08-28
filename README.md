@@ -11,8 +11,9 @@
 - [3. Arquitectura y Tecnologías](#3-arquitectura-y-tecnologías)
 - [4. Estructura del Monorepo](#4-estructura-del-monorepo)
 - [5. Guía de Instalación y Ejecución Local](#5-guía-de-instalación-y-ejecución-local)
-- [6. Endpoints y Documentación OpenAPI (Swagger)](#6-endpoints-y-documentación-openapi-swagger)
-- [7. Algoritmo de Liquidación Óptima (Min Cash Flow)](#7-algoritmo-de-liquidación-óptima-min-cash-flow)
+- [6. Guía de Despliegue en Producción (VPS / Cloud)](#6-guía-de-despliegue-en-producción-vps--cloud)
+- [7. Endpoints y Documentación OpenAPI (Swagger)](#7-endpoints-y-documentación-openapi-swagger)
+- [8. Algoritmo de Liquidación Óptima (Min Cash Flow)](#8-algoritmo-de-liquidación-óptima-min-cash-flow)
 
 ---
 
@@ -129,7 +130,20 @@ O de forma independiente:
 
 ---
 
-## 6. Endpoints y Documentación OpenAPI (Swagger)
+## 6. Guía de Despliegue en Producción (VPS / Cloud)
+
+Para desplegar la aplicación completa en entornos de producción, consulta la [**Guía de Despliegue (`docs/DEPLOYMENT_GUIDE.md`)**](./docs/DEPLOYMENT_GUIDE.md), que incluye:
+- **Opción A (VPS / Docker Compose):** Despliegue integral con `docker-compose.prod.yml`, Nginx y certificado SSL HTTPS automático vía Certbot.
+- **Opción B (PaaS / Cloud):** Frontend en Vercel/Netlify, Backend en Render/Railway y MySQL administrado.
+
+Comando rápido para levantar producción en VPS:
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+---
+
+## 7. Endpoints y Documentación OpenAPI (Swagger)
 
 Una vez iniciado el backend, accede a la documentación interactiva Swagger en:  
 👉 **`http://localhost:3001/api/docs`**
@@ -150,7 +164,7 @@ Una vez iniciado el backend, accede a la documentación interactiva Swagger en:
 
 ---
 
-## 7. Algoritmo de Liquidación Óptima (Min Cash Flow)
+## 8. Algoritmo de Liquidación Óptima (Min Cash Flow)
 
 El motor financiero de la plataforma implementa un algoritmo codicioso (*Greedy*) de simplificación de redes de flujo de efectivo:
 1. Calcula para cada usuario su balance neto $B_i = \text{Pagado}_i - \text{Consumido}_i + \text{Liquidaciones Pagadas}_i - \text{Liquidaciones Recibidas}_i$.

@@ -1,0 +1,67 @@
+services:
+  # Base de Datos MySQL 8.0
+  db:
+    image: mysql:8.0
+    container_name: amigogasto_prod_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_secure_password_2026}
+      MYSQL_DATABASE: ${DB_NAME:-amigogasto_db}
+      MYSQL_USER: ${DB_USERNAME:-amigouser}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-amigo_secure_password_2026}
+    volumes:
+      - mysql_prod_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_secure_password_2026}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - amigogasto_prod_net
+
+  # Backend NestJS
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    container_name: amigogasto_prod_backend
+    restart: always
+    environment:
+      PORT: 3001
+      NODE_ENV: production
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USERNAME: ${DB_USERNAME:-amigouser}
+      DB_PASSWORD: ${DB_PASSWORD:-amigo_secure_password_2026}
+      DB_NAME: ${DB_NAME:-amigogasto_db}
+      DB_SYNCHRONIZE: "true"
+      DB_LOGGING: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - amigogasto_prod_net
+
+  # Frontend React (Nginx)
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      args:
+        VITE_API_URL: /api
+    container_name: amigogasto_prod_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - amigogasto_prod_net
+
+volumes:
+  mysql_prod_data:
+    driver: local
+
+networks:
+  amigogasto_prod_net:
+    driver: bridge

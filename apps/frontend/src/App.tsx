@@ -15,6 +15,8 @@ const MainLayout: React.FC = () => {
 
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [isCreateExpenseOpen, setIsCreateExpenseOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
   const [settleModalData, setSettleModalData] = useState<{
     isOpen: boolean;
     suggestion: DebtSuggestion | null;
@@ -38,18 +40,19 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col selection:bg-emerald-500 selection:text-white">
-      {/* Navbar Superior */}
+      {/* Navbar Superior con botón toggle para móvil */}
       <Navbar
         onOpenCreateGroup={() => setIsCreateGroupOpen(true)}
         onGoHome={handleGoHome}
+        onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
       />
 
       {/* Contenido Principal */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         {isLoading && !selectedGroup ? (
           <div className="flex flex-col items-center justify-center py-32 space-y-4">
             <Loader2 className="w-10 h-10 text-emerald-400 animate-spin" />
-            <p className="text-sm font-medium text-slate-400">
+            <p className="text-sm font-medium text-slate-400 text-center px-4">
               Conectando con AmigoGasto Backend & MySQL...
             </p>
           </div>
@@ -58,9 +61,17 @@ const MainLayout: React.FC = () => {
             {/* Resumen de Métricas Financieras */}
             <DashboardSummary />
 
-            {/* Layout en 2 Columnas (Sidebar de Grupos + Detalle del Grupo) */}
-            <div className="flex flex-col md:flex-row gap-6">
-              <Sidebar onOpenCreateGroup={() => setIsCreateGroupOpen(true)} />
+            {/* Layout en 2 Columnas (Sidebar responsivo + Detalle del Grupo) */}
+            <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-start">
+              <Sidebar
+                onOpenCreateGroup={() => {
+                  setIsMobileSidebarOpen(false);
+                  setIsCreateGroupOpen(true);
+                }}
+                isMobileOpen={isMobileSidebarOpen}
+                onCloseMobile={() => setIsMobileSidebarOpen(false)}
+              />
+
               <GroupDetail
                 onOpenCreateExpense={() => setIsCreateExpenseOpen(true)}
                 onOpenSettleModal={handleOpenSettleModal}

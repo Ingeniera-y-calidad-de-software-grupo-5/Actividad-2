@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Group, GroupCategory } from '../types';
-import { Plane, Home, PartyPopper, Tag, Plus, ChevronRight } from 'lucide-react';
+import { Plane, Home, PartyPopper, Tag, Plus, ChevronRight, X } from 'lucide-react';
 
 const CATEGORY_ICONS: Record<GroupCategory, React.ReactNode> = {
   TRIP: <Plane className="w-4 h-4 text-sky-400" />,
@@ -12,12 +12,16 @@ const CATEGORY_ICONS: Record<GroupCategory, React.ReactNode> = {
 
 const CATEGORY_NAMES: Record<GroupCategory, string> = {
   TRIP: 'Viajes',
-  HOUSE: 'Casas Compartidas',
-  EVENT: 'Eventos Sociales',
-  OTHER: 'Otros Grupos',
+  HOUSE: 'Casas',
+  EVENT: 'Eventos',
+  OTHER: 'Otros',
 };
 
-export const Sidebar: React.FC<{ onOpenCreateGroup: () => void }> = ({ onOpenCreateGroup }) => {
+export const Sidebar: React.FC<{
+  onOpenCreateGroup: () => void;
+  isMobileOpen?: boolean;
+  onCloseMobile?: () => void;
+}> = ({ onOpenCreateGroup, isMobileOpen, onCloseMobile }) => {
   const { groups, selectedGroup, selectGroupById } = useApp();
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
 
@@ -26,28 +30,39 @@ export const Sidebar: React.FC<{ onOpenCreateGroup: () => void }> = ({ onOpenCre
       ? groups
       : groups.filter((g) => g.category === filterCategory);
 
-  return (
-    <aside className="w-full md:w-80 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col h-full backdrop-blur-sm">
+  const content = (
+    <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-base font-bold text-white">Tus Grupos</h2>
           <p className="text-xs text-slate-400">Selecciona o crea un grupo</p>
         </div>
-        <button
-          onClick={onOpenCreateGroup}
-          className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 transition"
-          title="Crear Nuevo Grupo"
-        >
-          <Plus className="w-4 h-4" />
-        </button>
+        <div className="flex items-center space-x-1.5">
+          <button
+            onClick={onOpenCreateGroup}
+            className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 transition"
+            title="Crear Nuevo Grupo"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+          {onCloseMobile && (
+            <button
+              onClick={onCloseMobile}
+              className="md:hidden p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              title="Cerrar panel"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Categorías Filter Chips */}
-      <div className="flex items-center space-x-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none">
+      <div className="flex items-center space-x-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none touch-pan-x">
         <button
           onClick={() => setFilterCategory('ALL')}
-          className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
+          className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition shrink-0 ${
             filterCategory === 'ALL'
               ? 'bg-slate-700 text-white'
               : 'bg-slate-800/60 text-slate-400 hover:text-slate-200'
@@ -59,7 +74,7 @@ export const Sidebar: React.FC<{ onOpenCreateGroup: () => void }> = ({ onOpenCre
           <button
             key={cat}
             onClick={() => setFilterCategory(cat)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap flex items-center space-x-1 transition ${
+            className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap flex items-center space-x-1 transition shrink-0 ${
               filterCategory === cat
                 ? 'bg-slate-700 text-white'
                 : 'bg-slate-800/60 text-slate-400 hover:text-slate-200'
@@ -71,7 +86,7 @@ export const Sidebar: React.FC<{ onOpenCreateGroup: () => void }> = ({ onOpenCre
       </div>
 
       {/* Lista de Grupos */}
-      <div className="space-y-2 overflow-y-auto flex-1 pr-1">
+      <div className="space-y-2 overflow-y-auto flex-1 pr-1 max-h-[60vh] md:max-h-none">
         {filteredGroups.length === 0 ? (
           <div className="text-center py-8 text-slate-500 text-xs">
             No hay grupos en esta categoría
@@ -82,7 +97,10 @@ export const Sidebar: React.FC<{ onOpenCreateGroup: () => void }> = ({ onOpenCre
             return (
               <div
                 key={group.id}
-                onClick={() => selectGroupById(group.id)}
+                onClick={() => {
+                  selectGroupById(group.id);
+                  if (onCloseMobile) onCloseMobile();
+                }}
                 className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between group ${
                   isSelected
                     ? 'bg-slate-800 border-emerald-500/60 shadow-sm shadow-emerald-500/10'
@@ -121,6 +139,30 @@ export const Sidebar: React.FC<{ onOpenCreateGroup: () => void }> = ({ onOpenCre
           })
         )}
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-80 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex-col shrink-0 backdrop-blur-sm">
+        {content}
+      </aside>
+
+      {/* Mobile Drawer */}
+      {isMobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+            onClick={onCloseMobile}
+          />
+          {/* Panel */}
+          <div className="relative w-4/5 max-w-xs bg-slate-900 border-r border-slate-800 p-4 flex flex-col h-full shadow-2xl z-10 animate-slideRight">
+            {content}
+          </div>
+        </div>
+      )}
+    </>
   );
 };

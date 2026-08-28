@@ -29,7 +29,6 @@ export const CreateExpenseModal: React.FC<{ isOpen: boolean; onClose: () => void
   const [participantIds, setParticipantIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Inicializar participantes cuando se abre el modal
   React.useEffect(() => {
     if (selectedGroup) {
       const allIds = selectedGroup.members.map((m) => m.user.id);
@@ -86,46 +85,48 @@ export const CreateExpenseModal: React.FC<{ isOpen: boolean; onClose: () => void
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-slate-900 border border-slate-700/80 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-850">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-800 bg-slate-850 shrink-0">
+          <div className="flex items-center space-x-2 sm:space-x-2.5">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
               <Receipt className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Registrar Gasto</h3>
-              <p className="text-xs text-slate-400">Grupo: {selectedGroup.name}</p>
+              <h3 className="text-base sm:text-lg font-bold text-white">Registrar Gasto</h3>
+              <p className="text-[11px] text-slate-400 truncate max-w-[200px]">
+                Grupo: {selectedGroup.name}
+              </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Formulario */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3.5 sm:space-y-4 overflow-y-auto flex-1">
           {/* Concepto y Monto */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <div className="col-span-2">
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                Descripción / Concepto *
+              <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                Concepto / Título *
               </label>
               <input
                 type="text"
                 required
-                placeholder="Ej: Cena, Cabaña, Supermercado..."
+                placeholder="Ej: Supermercado, Asado..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
             <div className="col-span-1">
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
                 Monto ({selectedGroup.currency}) *
               </label>
               <input
@@ -136,21 +137,21 @@ export const CreateExpenseModal: React.FC<{ isOpen: boolean; onClose: () => void
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white font-bold text-emerald-400 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-2.5 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm text-white font-bold text-emerald-400 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
           </div>
 
           {/* Pagador y Fecha */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
                 ¿Quién Pagó?
               </label>
               <select
                 value={paidById}
                 onChange={(e) => setPaidById(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-2 sm:py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 {selectedGroup.members.map((m) => (
                   <option key={m.user.id} value={m.user.id}>
@@ -160,56 +161,56 @@ export const CreateExpenseModal: React.FC<{ isOpen: boolean; onClose: () => void
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
                 Fecha
               </label>
               <input
                 type="date"
                 value={expenseDate}
                 onChange={(e) => setExpenseDate(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-2 sm:py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
           </div>
 
           {/* Categoría */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
               Categoría
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
               {CATEGORY_ITEMS.map((item) => (
                 <button
                   type="button"
                   key={item.type}
                   onClick={() => setCategory(item.type)}
-                  className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl border text-xs font-medium transition ${
+                  className={`flex items-center justify-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:py-2 rounded-xl border text-[11px] sm:text-xs font-medium transition ${
                     category === item.type
                       ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
                       : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-slate-800'
                   }`}
                 >
                   {item.icon}
-                  <span>{item.label}</span>
+                  <span className="truncate">{item.label}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* División de Gastos (Splits) */}
+          {/* División de Gastos */}
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                Dividir entre ({participantIds.length} participantes)
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-[11px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Dividir entre ({participantIds.length})
               </label>
               {numAmount > 0 && participantIds.length > 0 && (
-                <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-800/60">
+                <span className="text-[11px] sm:text-xs font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-800/60">
                   {selectedGroup.currency} {splitPerPerson} c/u
                 </span>
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 max-h-32 overflow-y-auto pr-1">
               {selectedGroup.members.map((m) => {
                 const isSelected = participantIds.includes(m.user.id);
                 return (
@@ -223,7 +224,7 @@ export const CreateExpenseModal: React.FC<{ isOpen: boolean; onClose: () => void
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 rounded flex items-center justify-center border ${
+                      className={`w-4 h-4 rounded flex items-center justify-center border shrink-0 ${
                         isSelected
                           ? 'bg-emerald-500 border-emerald-500 text-slate-950'
                           : 'border-slate-600'
@@ -238,19 +239,19 @@ export const CreateExpenseModal: React.FC<{ isOpen: boolean; onClose: () => void
             </div>
           </div>
 
-          {/* Botones de Acción */}
-          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
+          {/* Botones */}
+          <div className="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition"
+              className="px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSubmitting || !description.trim() || numAmount <= 0}
-              className="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 disabled:opacity-50 text-slate-950 font-bold px-5 py-2 rounded-xl text-sm transition shadow-md shadow-emerald-500/20"
+              className="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 disabled:opacity-50 text-slate-950 font-bold px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm transition shadow-md shadow-emerald-500/20"
             >
               {isSubmitting ? 'Guardando...' : 'Guardar Gasto'}
             </button>

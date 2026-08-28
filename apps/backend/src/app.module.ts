@@ -22,18 +22,22 @@ import { Settlement } from './modules/balances/entities/settlement.entity';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get<string>('DB_HOST', 'localhost'),
-        port: configService.get<number>('DB_PORT', 3306),
-        username: configService.get<string>('DB_USERNAME', 'amigouser'),
-        password: configService.get<string>('DB_PASSWORD', 'amigopassword'),
-        database: configService.get<string>('DB_NAME', 'amigogasto_db'),
-        entities: [User, Group, GroupMember, Expense, ExpenseSplit, Settlement],
-        synchronize: configService.get<string>('DB_SYNCHRONIZE', 'true') === 'true',
-        logging: configService.get<string>('DB_LOGGING', 'false') === 'true',
-        autoLoadEntities: true,
-      }),
+      useFactory: (configService: ConfigService) => {
+        const useSsl = configService.get<string>('DB_SSL', 'false') === 'true';
+        return {
+          type: 'mysql',
+          host: configService.get<string>('DB_HOST', 'localhost'),
+          port: Number(configService.get<number>('DB_PORT', 3306)),
+          username: configService.get<string>('DB_USERNAME', 'amigouser'),
+          password: configService.get<string>('DB_PASSWORD', 'amigopassword'),
+          database: configService.get<string>('DB_NAME', 'amigogasto_db'),
+          entities: [User, Group, GroupMember, Expense, ExpenseSplit, Settlement],
+          synchronize: configService.get<string>('DB_SYNCHRONIZE', 'true') === 'true',
+          logging: configService.get<string>('DB_LOGGING', 'false') === 'true',
+          ssl: useSsl ? { rejectUnauthorized: false } : false,
+          autoLoadEntities: true,
+        };
+      },
     }),
     UsersModule,
     GroupsModule,
