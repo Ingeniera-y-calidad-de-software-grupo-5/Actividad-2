@@ -1,0 +1,11 @@
+{
+  "framework": "vite",
+  "buildCommand": "yarn workspace @amigogasto/frontend build",
+  "outputDirectory": "apps/frontend/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
