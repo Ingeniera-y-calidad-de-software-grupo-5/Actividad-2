@@ -2,7 +2,7 @@ services:
   db:
     image: mysql:8.0
     container_name: amigogasto_mysql
-    restart: always
+    restart: no
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: amigogasto_db
@@ -23,7 +23,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: amigogasto_phpmyadmin
-    restart: always
+    restart: no
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
